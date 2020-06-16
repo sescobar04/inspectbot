@@ -47,17 +47,23 @@ def motor_reverse(motor_pins):
 	GPIO.output(motor_pins[0], False) # Ensures the motor isn't also trying to move forward
 	GPIO.output(motor_pins[1], True) # Sets the motor to reverse
 
+def motor_set_speed(motor_pins, speed):
+    for pin in motor_pins:
+        motor_speed[pin] = GPIO.PWM(pin, speed)
+    return motor_speed
+
 def time_check(last_time):
 	# Time check will be used to test if a specified amount of time has passed
 	# since the last pilot input was recieved.
 	time_passed = datetime.datetime.now() - last_time # finding the difference between the last time and time now
 	print("Time Passed = " + str(time_passed)) # Printing the amount of time that passed. (debug)
-	if (time_passed > datetime.timedelta(seconds=4)): # If the time passed is greater than 3 seconds
+	if (time_passed > datetime.timedelta(seconds=3)): # If the time passed is greater than 3 seconds
 		return(True)
 	else: # if the time passed is not greater than 3 seconds
 		return(False)
 
 def dead_man(last_time, l_motor_pins, r_motor_pins):
+    # Dead man switch stops motors if not pilot input recieved for 3 seconds
 	if not time_check(last_time): # If time_check() returns false
 		print("Continue movement")	# Test statement
 		return # Do nothing
@@ -68,7 +74,9 @@ def dead_man(last_time, l_motor_pins, r_motor_pins):
 #main code execution
 try:
 	left_motor = [4, 17] # List of the GPIO pins that control the left motor
+    left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100%
 	right_motor = [27, 22] # List of the GPIO pins that control the right motor
+    right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100%
 	LED_pins = [23] # List of the GPIO pins that control the LEDS
 
 	GPIO.setmode(GPIO.BCM) # Set the pin reference mode
@@ -91,7 +99,6 @@ try:
 		print(i+1) # prints i+1 for each iteration
 	dead_man(last_time, left_motor, right_motor) # Tests the last time an input was recieved and stops motors if necessary
 	print("Code works") # Only prints if all code runs
-
 	# TO DO
 	# Add PWM speed control for motors
 	# Allow two or three selectable speeds for motors
