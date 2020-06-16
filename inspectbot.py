@@ -1,0 +1,104 @@
+import RPi.GPIO as GPIO # For controlling the raspberry pi's GPIO pins
+import curses # For keyboard input to control robot
+import datetime # For testing time passed in time_check(). Necessary for dead man switch
+from time import sleep # Necessary for LED_flash and testing time_check() and by extension, dead_man()
+
+def gpio_setup_outputs(pins):
+	#Sets the GPIO pins in a list to outputs
+	for pin in pins:
+		GPIO.setup(pin, GPIO.OUT)
+	return;
+
+def LED_on(pin):
+	# Turns on a specified LED
+	#pin is the number of the GPIO pin to be turned on
+	GPIO.output(pin, True)
+	print("LED on")
+
+def LED_off(pin):
+	# Turns off a specified LED
+	#pin is the number of the GPIO pin to be turned off
+	GPIO.output(pin, False)
+	print("LED off")
+
+def LED_flash(pin):
+	# Flashes a specified LED
+	#pin is the number of the GPIO pin to be flashed
+	for i in range(0, 2):
+		LED_on(pin)
+		sleep(.500)
+		LED_off(pin)
+		sleep(.500)
+
+def motors_stop(l_motor_pins, r_motor_pins):
+	#Stop both motors regardless of direction
+	for pin in l_motor_pins: #Stopping left motor
+		GPIO.output(pin, False)
+	for pin in r_motor_pins: #Stopping right motor
+		GPIO.output(pin, False)
+
+def motor_forward(motor_pins):
+	# Sets specified motor to move forward
+	GPIO.output(motor_pins[1], False) # Ensures the motor isn't also trying to reverse
+	GPIO.output(motor_pins[0], True) # Sets the motor to move forward
+
+def motor_reverse(motor_pins):
+	# Sets specified motor to reverse
+	GPIO.output(motor_pins[0], False) # Ensures the motor isn't also trying to move forward
+	GPIO.output(motor_pins[1], True) # Sets the motor to reverse
+
+def time_check(last_time):
+	# Time check will be used to test if a specified amount of time has passed
+	# since the last pilot input was recieved.
+	time_passed = datetime.datetime.now() - last_time # finding the difference between the last time and time now
+	print("Time Passed = " + str(time_passed)) # Printing the amount of time that passed. (debug)
+	if (time_passed > datetime.timedelta(seconds=4)): # If the time passed is greater than 3 seconds
+		return(True)
+	else: # if the time passed is not greater than 3 seconds
+		return(False)
+
+def dead_man(last_time, l_motor_pins, r_motor_pins):
+	if not time_check(last_time): # If time_check() returns false
+		print("Continue movement")	# Test statement
+		return # Do nothing
+	else: # If time_check() returns True
+		print("Stop motors") # Test statement
+		motors_stop(l_motor_pins, r_motor_pins) # Stop both motors
+
+#main code execution
+try:
+	left_motor = [4, 17] # List of the GPIO pins that control the left motor
+	right_motor = [27, 22] # List of the GPIO pins that control the right motor
+	LED_pins = [23] # List of the GPIO pins that control the LEDS
+
+	GPIO.setmode(GPIO.BCM) # Set the pin reference mode
+	gpio_setup_outputs(left_motor) # Set up the left motor pins
+	gpio_setup_outputs(right_motor) # Set up the right motor pins
+	motors_stop(left_motor, right_motor) # Stops both motors
+	gpio_setup_outputs(LED_pins) # Set up the LED GPIO pins
+
+	motor_forward(left_motor) # Sets the left motor to move forward
+	motor_forward(right_motor) # Sets the right motor to move forward
+	motor_reverse(left_motor) # Sets the left motor to revers
+	motor_reverse(right_motor) # Sets the right motor to reverse
+	motors_stop(left_motor, right_motor) # Stops both motors
+	LED_flash(LED_pins[0]) # Flashes LED at LED_pins[0]
+
+	last_time = datetime.datetime.now() # Sets the last_time as the current time at execution
+	print("Last time = " + str(last_time)) # Debug. Prints the variable last_time
+	for i in range(4): # Sleep 4 seconds to test dead_man()
+		sleep(1)  # Sleep for one second per iteration
+		print(i+1) # prints i+1 for each iteration
+	dead_man(last_time, left_motor, right_motor) # Tests the last time an input was recieved and stops motors if necessary
+	print("Code works") # Only prints if all code runs
+
+	# TO DO
+	# Add PWM speed control for motors
+	# Allow two or three selectable speeds for motors
+	# Purpose of this is to allow pilot finer resolution movement control
+
+finally:
+	motors_stop(left_motor, right_motor) # Stops motors once code is completed
+	LED_off(LED_pins) # Turns off all LEDs once code is completed
+	GPIO.cleanup() # Cleans up GPIO after code is completed
+	print("Code Finished") # Prints once execution is complete
