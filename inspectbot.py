@@ -48,9 +48,10 @@ def motor_reverse(motor_pins):
 	GPIO.output(motor_pins[1], True) # Sets the motor to reverse
 
 def motor_set_speed(motor_pins, speed):
-    for pin in motor_pins:
-        motor_speed[pin] = GPIO.PWM(pin, speed)
-    return motor_speed
+	motor_speed = []
+	for pin in motor_pins:
+		motor_speed.append(GPIO.PWM(pin, speed))
+	return motor_speed
 
 def time_check(last_time):
 	# Time check will be used to test if a specified amount of time has passed
@@ -73,10 +74,9 @@ def dead_man(last_time, l_motor_pins, r_motor_pins):
 
 #main code execution
 try:
+
 	left_motor = [4, 17] # List of the GPIO pins that control the left motor
-    left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100%
 	right_motor = [27, 22] # List of the GPIO pins that control the right motor
-    right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100%
 	LED_pins = [23] # List of the GPIO pins that control the LEDS
 
 	GPIO.setmode(GPIO.BCM) # Set the pin reference mode
@@ -84,6 +84,16 @@ try:
 	gpio_setup_outputs(right_motor) # Set up the right motor pins
 	motors_stop(left_motor, right_motor) # Stops both motors
 	gpio_setup_outputs(LED_pins) # Set up the LED GPIO pins
+
+	# I think for now it's best to leave out the attempt at PWM
+	# until I actually build the bot.
+	# Based on my understanding, I think my current implementation of
+	# motors_stop(), motor_forward(), and motor_reverse() don't work with
+	# PWM. 
+	
+	#right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100
+	#left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100
+	#print(right_motor_speed)
 
 	motor_forward(left_motor) # Sets the left motor to move forward
 	motor_forward(right_motor) # Sets the right motor to move forward
