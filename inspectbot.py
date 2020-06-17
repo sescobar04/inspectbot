@@ -36,16 +36,19 @@ def motors_stop(l_motor_pins, r_motor_pins):
 		GPIO.output(pin, False)
 	for pin in r_motor_pins: #Stopping right motor
 		GPIO.output(pin, False)
+	print("Stop motors")
 
 def motor_forward(motor_pins):
 	# Sets specified motor to move forward
 	GPIO.output(motor_pins[1], False) # Ensures the motor isn't also trying to reverse
 	GPIO.output(motor_pins[0], True) # Sets the motor to move forward
+	print("motor_forward, pin: " + str(motor_pins[0]))
 
 def motor_reverse(motor_pins):
 	# Sets specified motor to reverse
 	GPIO.output(motor_pins[0], False) # Ensures the motor isn't also trying to move forward
 	GPIO.output(motor_pins[1], True) # Sets the motor to reverse
+	print("motor_reverse, pin: " + str(motor_pins[1]))
 
 def motor_set_speed(motor_pins, speed):
 	motor_speed = []
@@ -66,11 +69,37 @@ def time_check(last_time):
 def dead_man(last_time, l_motor_pins, r_motor_pins):
     # Dead man switch stops motors if not pilot input recieved for 3 seconds
 	if not time_check(last_time): # If time_check() returns false
-		print("Continue movement")	# Test statement
-		return # Do nothing
+		print("Dead man: Continue movement")	# Test statement
+		return(False) # Do nothing
 	else: # If time_check() returns True
-		print("Stop motors") # Test statement
+		print("Dead man: Stop motors") # Test statement
 		motors_stop(l_motor_pins, r_motor_pins) # Stop both motors
+		return(True)
+def test_functions(l_motor_pins, r_motor_pins, LEDs):
+	motor_forward(l_motor_pins)
+	motor_reverse(r_motor_pins)
+	sleep(1)
+	motor_forward(r_motor_pins)
+	motor_reverse(l_motor_pins)
+	sleep(1)
+	motor_forward(l_motor_pins)
+	motor_forward(r_motor_pins)
+	sleep(1)
+	motor_reverse(l_motor_pins)
+	motor_reverse(r_motor_pins)
+	sleep(1)
+	motors_stop(l_motor_pins, r_motor_pins)
+	sleep(.500)
+	last_time = datetime.datetime.now()
+	motor_forward(l_motor_pins)
+	motor_reverse(r_motor_pins)
+	for i in range(4):
+		sleep(1)
+		dead = dead_man(last_time, l_motor_pins, r_motor_pins)
+		if dead:
+			break
+	LED_flash(LEDs[0])
+	return(1)
 
 #main code execution
 try:
@@ -90,24 +119,13 @@ try:
 	# Based on my understanding, I think my current implementation of
 	# motors_stop(), motor_forward(), and motor_reverse() don't work with
 	# PWM. 
-	
+
 	#right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100
 	#left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100
 	#print(right_motor_speed)
 
-	motor_forward(left_motor) # Sets the left motor to move forward
-	motor_forward(right_motor) # Sets the right motor to move forward
-	motor_reverse(left_motor) # Sets the left motor to revers
-	motor_reverse(right_motor) # Sets the right motor to reverse
-	motors_stop(left_motor, right_motor) # Stops both motors
-	LED_flash(LED_pins[0]) # Flashes LED at LED_pins[0]
+	test_functions(left_motor, right_motor, LED_pins)
 
-	last_time = datetime.datetime.now() # Sets the last_time as the current time at execution
-	print("Last time = " + str(last_time)) # Debug. Prints the variable last_time
-	for i in range(4): # Sleep 4 seconds to test dead_man()
-		sleep(1)  # Sleep for one second per iteration
-		print(i+1) # prints i+1 for each iteration
-	dead_man(last_time, left_motor, right_motor) # Tests the last time an input was recieved and stops motors if necessary
 	print("Code works") # Only prints if all code runs
 	# TO DO
 	# Add PWM speed control for motors
