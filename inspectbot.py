@@ -75,7 +75,9 @@ def dead_man(last_time, l_motor_pins, r_motor_pins):
 		print("Dead man: Stop motors") # Test statement
 		motors_stop(l_motor_pins, r_motor_pins) # Stop both motors
 		return(True)
+
 def test_functions(l_motor_pins, r_motor_pins, LEDs):
+	print("TEST FUNCTIONS")
 	motor_forward(l_motor_pins)
 	motor_reverse(r_motor_pins)
 	sleep(1)
@@ -101,6 +103,28 @@ def test_functions(l_motor_pins, r_motor_pins, LEDs):
 	LED_flash(LEDs[0])
 	return(1)
 
+def pilot_control(input, l_motor_pins, r_motor_pins):
+	if input == 10:
+		motors_stop(l_motor_pins, r_motor_pins)
+		time = datetime.datetime.now()
+	elif input == curses.KEY_UP:
+		motor_forward(l_motor_pins)
+		motor_forward(r_motor_pins)
+		time = datetime.datetime.now()
+	elif input == curses.KEY_DOWN:
+		motor_reverse(l_motor_pins)
+		motor_reverse(r_motor_pins)
+		time = datetime.datetime.now()
+	elif input == curses.KEY_RIGHT:
+		motor_forward(l_motor_pins)
+		motor_reverse(r_motor_pins)
+		time = datetime.datetime.now()
+	elif input == curses.KEY_LEFT:
+		motor_forward(r_motor_pins)
+		motor_reverse(l_motor_pins)
+		time = datetime.datetime.now()
+	return(time)
+
 #main code execution
 try:
 
@@ -114,25 +138,49 @@ try:
 	motors_stop(left_motor, right_motor) # Stops both motors
 	gpio_setup_outputs(LED_pins) # Set up the LED GPIO pins
 
-	# I think for now it's best to leave out the attempt at PWM
-	# until I actually build the bot.
-	# Based on my understanding, I think my current implementation of
-	# motors_stop(), motor_forward(), and motor_reverse() don't work with
-	# PWM. 
+	"""
+	I think for now it's best to leave out the attempt at PWM
+	 until I actually build the bot.
+	 Based on my understanding, I think my current implementation of
+	 motors_stop(), motor_forward(), and motor_reverse() don't work with
+	 PWM. 
+	 right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100
+	 left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100
+	 print(right_motor_speed) 
+	"""
 
-	#right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100
-	#left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100
-	#print(right_motor_speed)
 
-	test_functions(left_motor, right_motor, LED_pins)
+	screen = curses.initscr()
+	curses.noecho()
+	curses.cbreak()
+	screen.keypad(True)
+
+	last_input = datetime.datetime.now()
+
+	while True:
+		# current implementation of dead_man() will not work
+		# because screen.getch() pauses the while loop
+		input = screen.getch()
+		if input == ord('q'):
+			break
+		else:
+			last_input = pilot_control(input, left_motor, right_motor)
+		#dead_man(last_input, left_motor, right_motor)
+	# test_functions(left_motor, right_motor, LED_pins)
 
 	print("Code works") # Only prints if all code runs
-	# TO DO
-	# Add PWM speed control for motors
-	# Allow two or three selectable speeds for motors
-	# Purpose of this is to allow pilot finer resolution movement control
+
+	""" 
+	TO DO
+	 Add PWM speed control for motors
+	 Allow two or three selectable speeds for motors
+	 Purpose of this is to allow pilot finer resolution movement control 
+	"""
 
 finally:
+	curses.nocbreak(); screen.keypad(0); curses.echo()
+	curses.endwin()
+
 	motors_stop(left_motor, right_motor) # Stops motors once code is completed
 	LED_off(LED_pins) # Turns off all LEDs once code is completed
 	GPIO.cleanup() # Cleans up GPIO after code is completed
