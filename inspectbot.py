@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO # For controlling the raspberry pi's GPIO pins
 import datetime # For testing time passed in time_check(). Necessary for dead man switch
+import curses
 from time import sleep # Necessary for LED_flash and testing time_check() and by extension, dead_man()
+
 
 def gpio_setup_outputs(pins):
 	#Sets the GPIO pins in a list to outputs
@@ -48,24 +50,6 @@ def test_functions(Robot):
 	Robot.motor_reverse(Robot.right_motor)
 	Robot.LED_flash(Robot.LEDs[0])
 	return(1)
-
-def pilot_control(input, Robot):
-	if input == 10:
-		Robot.motors_stop()
-	elif input == curses.KEY_UP:
-		Robot.motor_forward(Robot.left_motor)
-		Robot.motor_forward(Robot.right_motor)
-	elif input == curses.KEY_DOWN:
-		Robot.motor_reverse(Robot.left_motor)
-		Robot.motor_reverse(Robot.right_motor)
-	elif input == curses.KEY_RIGHT:
-		Robot.motor_forward(Robot.left_motor)
-		Robot.motor_reverse(Robot.right_motor)
-	elif input == curses.KEY_LEFT:
-		Robot.motor_forward(Robot.right_motor)
-		Robot.motor_reverse(Robot.left_motor)
-	return()
-
 
 class Robot:
 
@@ -123,6 +107,24 @@ class Robot:
 		motor_speed = (GPIO.PWM(motor_pin, speed))
 		return motor_speed
 
+	def pilot_control(self, input):
+		if input == 10:
+			self.motors_stop()
+		elif input == curses.KEY_UP:
+			self.motor_forward(self.left_motor)
+			self.motor_forward(self.right_motor)
+		elif input == curses.KEY_DOWN:
+			self.motor_reverse(self.left_motor)
+			self.motor_reverse(self.right_motor)
+		elif input == curses.KEY_RIGHT:
+			self.motor_forward(self.left_motor)
+			self.motor_reverse(self.right_motor)
+		elif input == curses.KEY_LEFT:
+			self.motor_forward(self.right_motor)
+			self.motor_reverse(self.left_motor)
+		return()
+
+
 
 #main code execution
 try:
@@ -141,29 +143,25 @@ try:
 	gpio_setup_outputs(inspectbot.LEDs) # Set up the LED GPIO pins
 
 	# Setting up curses to recieve pilot input
-	#screen = curses.initscr()
-	#curses.noecho()
-	#curses.cbreak()
-	#screen.keypad(True)
+	screen = curses.initscr()
+	curses.noecho()
+	curses.cbreak()
+	screen.keypad(True)
 
-
-	"""
 	# While loop listens for pilot input 
 	while True:
 		input = screen.getch()
 		if input == ord('q'):
 			break
 		else:
-			pilot_control(input, left_motor, right_motor)
-	"""
-
+			inspectbot.pilot_control(input)
 
 	test_functions(inspectbot)
 	print("Code works") # Only prints if all code runs
 
 finally:
-	#curses.nocbreak(); screen.keypad(0); curses.echo()
-	#curses.endwin()
+	curses.nocbreak(); screen.keypad(0); curses.echo()
+	curses.endwin()
 
 	inspectbot.motors_stop() # Stops motors once code is completed
 	inspectbot.LED_off(inspectbot.LEDs) # Turns off all LEDs once code is completed
