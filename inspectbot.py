@@ -159,8 +159,10 @@ try:
 	last_input = datetime.datetime.now()
 
 	while True:
-		# current implementation of dead_man() will not work
-		# because screen.getch() pauses the while loop
+		# current implementation of dead_man() will not work because screen.getch() pauses the while loop
+		# This means that dead_man() only checks how much time has passed when a key has been pressed
+		# dead_man print statement usually reads about 0.0001 seconds
+
 		input = screen.getch()
 		if input == ord('q'):
 			break
