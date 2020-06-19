@@ -45,7 +45,8 @@ def test_functions(Robot):
 	Robot.motor_reverse(Robot.right_motor)
 	sleep(1)
 	Robot.motors_stop
-	sleep(.500)
+	print("LEFT SPEED: " + str(Robot.left_motor_speed))
+	print("RIGHT SPEED: " + str(Robot.right_motor_speed))
 	Robot.motor_forward(Robot.left_motor)
 	Robot.motor_reverse(Robot.right_motor)
 	Robot.LED_flash(Robot.LEDs[0])
@@ -130,11 +131,6 @@ class Robot:
 try:
 	inspectbot = Robot([4, 17], [27, 22], [23]) # initializing a Robot object
 
-	# Testing if Robot object was properly created
-	print(inspectbot.left_motor) # printing the left_motor pin numbers
-	print(inspectbot.right_motor) # printing the right_motor pin numbers
-	print(inspectbot.LEDs) # printing the LEDs pin numbers
-
 	# Setting up the GPIO pins
 	GPIO.setmode(GPIO.BCM) # Set the pin reference mode
 	gpio_setup_outputs(inspectbot.left_motor) # Set up the left motor pins
@@ -142,6 +138,7 @@ try:
 	inspectbot.motors_stop() # Stops both motors
 	gpio_setup_outputs(inspectbot.LEDs) # Set up the LED GPIO pins
 
+	"""
 	# Setting up curses to recieve pilot input
 	screen = curses.initscr()
 	curses.noecho()
@@ -155,14 +152,19 @@ try:
 			break
 		else:
 			inspectbot.pilot_control(input)
+	"""
 
 	test_functions(inspectbot)
+
 	print("Code works") # Only prints if all code runs
 
 finally:
+	print
+	print("Cleaning up")
+	"""
 	curses.nocbreak(); screen.keypad(0); curses.echo()
 	curses.endwin()
-
+	"""
 	inspectbot.motors_stop() # Stops motors once code is completed
 	inspectbot.LED_off(inspectbot.LEDs) # Turns off all LEDs once code is completed
 	GPIO.cleanup() # Cleans up GPIO after code is completed
