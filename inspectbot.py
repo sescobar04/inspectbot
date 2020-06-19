@@ -141,9 +141,10 @@ try:
 	"""
 	I think for now it's best to leave out the attempt at PWM
 	 until I actually build the bot.
-	 Based on my understanding, I think my current implementation of
-	 motors_stop(), motor_forward(), and motor_reverse() don't work with
-	 PWM. 
+	 Based on my understanding, I think my current implementations of
+	 motors_stop(), motor_forward(), and motor_reverse() don't
+	 work with PWM.
+	 I *think* that motor_set_speed() might cause the motors to begin moving which is not my intention yet.
 	 right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100
 	 left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100
 	 print(right_motor_speed) 

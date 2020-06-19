@@ -1,3 +1,7 @@
+A list of some of the available keycodes that the curses python module can utilize.
+
+
+
 KEY_MIN
 	Minimum key value
 
