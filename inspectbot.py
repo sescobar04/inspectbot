@@ -109,21 +109,22 @@ class Robot:
 		return motor_speed
 
 	def pilot_control(self, input):
-		if input == 10:
+		if input == 10: # Robot Stops
 			self.motors_stop()
-		elif input == curses.KEY_UP:
+		elif input == curses.KEY_UP: # Robot Moves Forward
 			self.motor_forward(self.left_motor)
 			self.motor_forward(self.right_motor)
-		elif input == curses.KEY_DOWN:
+		elif input == curses.KEY_DOWN: # Robot Moves Backwards
 			self.motor_reverse(self.left_motor)
 			self.motor_reverse(self.right_motor)
-		elif input == curses.KEY_RIGHT:
+		elif input == curses.KEY_RIGHT: # Robot rotates right
 			self.motor_forward(self.left_motor)
 			self.motor_reverse(self.right_motor)
-		elif input == curses.KEY_LEFT:
+		elif input == curses.KEY_LEFT: # Robot rotates left
 			self.motor_forward(self.right_motor)
 			self.motor_reverse(self.left_motor)
-		return()
+		else:
+			print("Invalid input: " + str(ord(input)))
 
 
 
@@ -138,33 +139,31 @@ try:
 	inspectbot.motors_stop() # Stops both motors
 	gpio_setup_outputs(inspectbot.LEDs) # Set up the LED GPIO pins
 
-	"""
 	# Setting up curses to recieve pilot input
 	screen = curses.initscr()
 	curses.noecho()
 	curses.cbreak()
 	screen.keypad(True)
 
-	# While loop listens for pilot input 
+	# While loop listens for pilot input
 	while True:
 		input = screen.getch()
-		if input == ord('q'):
+		if input == ord('q'): # If pilot input is q, break while loop
 			break
-		else:
+		else: # If not q, check if input matches one of the conditions in Robot.pilot_control
 			inspectbot.pilot_control(input)
-	"""
 
-	test_functions(inspectbot)
+	#test_functions(inspectbot)
 
 	print("Code works") # Only prints if all code runs
 
 finally:
 	print
 	print("Cleaning up")
-	"""
+
 	curses.nocbreak(); screen.keypad(0); curses.echo()
 	curses.endwin()
-	"""
+
 	inspectbot.motors_stop() # Stops motors once code is completed
 	inspectbot.LED_off(inspectbot.LEDs) # Turns off all LEDs once code is completed
 	GPIO.cleanup() # Cleans up GPIO after code is completed
