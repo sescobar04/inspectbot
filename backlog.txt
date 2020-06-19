@@ -1,0 +1,19 @@
+inspectbot.py
+
+1. Create a class "robot" that will contain the
+   left_motor, right_motor, LED_pins, and the methods (functions) associated
+   with each. Use setters and getters as well as a constructor (__init__())
+
+2. Add PWM functionality for motor speed control
+
+
+-------------------------------------------------------------------------------
+
+General Project Needs
+
+3. Have the raspberry pi create it's own wireless network to which the pilot can connect
+   to in order to view the video feed
+
+4. Have inspectbot.py run at startup and depending on how it works, have the wireless network
+   initiate on startup
+
