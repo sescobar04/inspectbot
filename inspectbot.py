@@ -49,27 +49,22 @@ def test_functions(Robot):
 	Robot.LED_flash(Robot.LEDs[0])
 	return(1)
 
-def pilot_control(input, l_motor_pins, r_motor_pins):
+def pilot_control(input, Robot):
 	if input == 10:
-		motors_stop(l_motor_pins, r_motor_pins)
-		time = datetime.datetime.now()
+		Robot.motors_stop()
 	elif input == curses.KEY_UP:
-		motor_forward(l_motor_pins)
-		motor_forward(r_motor_pins)
-		time = datetime.datetime.now()
+		Robot.motor_forward(Robot.left_motor)
+		Robot.motor_forward(Robot.right_motor)
 	elif input == curses.KEY_DOWN:
-		motor_reverse(l_motor_pins)
-		motor_reverse(r_motor_pins)
-		time = datetime.datetime.now()
+		Robot.motor_reverse(Robot.left_motor)
+		Robot.motor_reverse(Robot.right_motor)
 	elif input == curses.KEY_RIGHT:
-		motor_forward(l_motor_pins)
-		motor_reverse(r_motor_pins)
-		time = datetime.datetime.now()
+		Robot.motor_forward(Robot.left_motor)
+		Robot.motor_reverse(Robot.right_motor)
 	elif input == curses.KEY_LEFT:
-		motor_forward(r_motor_pins)
-		motor_reverse(l_motor_pins)
-		time = datetime.datetime.now()
-	return(time)
+		Robot.motor_forward(Robot.right_motor)
+		Robot.motor_reverse(Robot.left_motor)
+	return()
 
 
 class Robot:
@@ -145,20 +140,7 @@ try:
 	inspectbot.motors_stop() # Stops both motors
 	gpio_setup_outputs(inspectbot.LEDs) # Set up the LED GPIO pins
 
-
-
-	"""
-	I think for now it's best to leave out the attempt at PWM
-	 until I actually build the bot.
-	 Based on my understanding, I think my current implementations of
-	 motors_stop(), motor_forward(), and motor_reverse() don't
-	 work with PWM.
-	 I *think* that motor_set_speed() might cause the motors to begin moving which is not my intention yet.
-	 right_motor_speed = motor_set_speed(right_motor, 100) # Setting right motor speed to 100
-	 left_motor_speed = motor_set_speed(left_motor, 100) # Setting left_motor speed to 100
-	 print(right_motor_speed) 
-	"""
-
+	# Setting up curses to recieve pilot input
 	#screen = curses.initscr()
 	#curses.noecho()
 	#curses.cbreak()
@@ -166,16 +148,13 @@ try:
 
 
 	"""
+	# While loop listens for pilot input 
 	while True:
-		# current implementation of dead_man() will not work because screen.getch() pauses the while loop
-		# This means that dead_man() only checks how much time has passed when a key has been pressed
-		# dead_man print statement usually reads about 0.0001 seconds
-
 		input = screen.getch()
 		if input == ord('q'):
 			break
 		else:
-			last_input = pilot_control(input, left_motor, right_motor)
+			pilot_control(input, left_motor, right_motor)
 	"""
 
 
