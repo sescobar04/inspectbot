@@ -73,6 +73,10 @@ def pilot_control(input, l_motor_pins, r_motor_pins):
 
 
 class Robot:
+
+	left_motor_speed = 0
+	right_motor_speed = 0
+
 	#Contructor
 	def __init__(self, left_motor, right_motor, LEDs):
 		self.left_motor = left_motor
@@ -120,26 +124,21 @@ class Robot:
 		GPIO.output(motor_pins[1], True) # Sets the motor to reverse
 		print("motor_reverse, pin: " + str(motor_pins[1]))
 
-	def motor_set_speed(motor_pins, speed):
-		motor_speed = []
-		for pin in motor_pins:
-			motor_speed.append(GPIO.PWM(pin, speed))
+	def motor_set_speed(self, motor_pin, speed):
+		motor_speed = (GPIO.PWM(motor_pin, speed))
 		return motor_speed
 
 
 #main code execution
 try:
+	inspectbot = Robot([4, 17], [27, 22], [23]) # initializing a Robot object
 
-	#left_motor = [4, 17] # List of the GPIO pins that control the left motor
-	#right_motor = [27, 22] # List of the GPIO pins that control the right motor
-	#LED_pins = [23] # List of the GPIO pins that control the LEDS
+	# Testing if Robot object was properly created
+	print(inspectbot.left_motor) # printing the left_motor pin numbers
+	print(inspectbot.right_motor) # printing the right_motor pin numbers
+	print(inspectbot.LEDs) # printing the LEDs pin numbers
 
-	inspectbot = Robot([4, 17], [27, 22], [23])
-
-	print(inspectbot.left_motor)
-	print(inspectbot.right_motor)
-	print(inspectbot.LEDs)
-
+	# Setting up the GPIO pins
 	GPIO.setmode(GPIO.BCM) # Set the pin reference mode
 	gpio_setup_outputs(inspectbot.left_motor) # Set up the left motor pins
 	gpio_setup_outputs(inspectbot.right_motor) # Set up the right motor pins
