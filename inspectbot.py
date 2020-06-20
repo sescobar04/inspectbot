@@ -75,6 +75,8 @@ class Robot:
 		self.right_motor = right_motor
 		self.LEDs = LEDs
 
+	#Deconstructor
+
 	def __del__(self):
 		print("Destructor called")
 		self.motors_stop()
@@ -128,6 +130,7 @@ class Robot:
 
 	def motor_PWM_start(self, motor_speed):
 		print("PWM started")
+		print("Motor speed: " + str(motor_speed))
 		motor_speed.start()
 
 	def pilot_control(self, input):
@@ -154,7 +157,6 @@ class Robot:
 
 
 #main code execution
-
 try:
 	inspectbot = Robot([4, 17], [27, 22], [23]) # initializing a Robot object
 
@@ -167,6 +169,7 @@ try:
 
 	inspectbot.motor_set_speed(inspectbot.left_motor[0], 50)
 	#inspectbot.motor_PWM_start(inspectbot.left_motor_speed)
+
 
 	# Setting up curses to recieve pilot input
 	screen = curses_start()
@@ -187,9 +190,6 @@ finally:
 	curses_stop(screen)
 	print
 	print("Cleaning up")
-
 	del inspectbot
-
 	GPIO.cleanup() # Cleans up GPIO after code is completed
 	print("Code Finished") # Prints once execution is complete
-
