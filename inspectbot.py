@@ -52,6 +52,18 @@ def test_functions(Robot):
 	Robot.LED_flash(Robot.LEDs[0])
 	return(1)
 
+def curses_start():
+	screen = curses.initscr()
+	curses.noecho()
+	curses.cbreak()
+	screen.keypad(True)
+	return(screen)
+
+def curses_stop(screen):
+	curses.nocbreak(); screen.keypad(0); curses.echo()
+	curses.endwin()
+	print("Curses stopped")
+
 class Robot:
 
 	left_motor_speed = 0
@@ -157,10 +169,7 @@ try:
 	#inspectbot.motor_PWM_start(inspectbot.left_motor_speed)
 
 	# Setting up curses to recieve pilot input
-	screen = curses.initscr()
-	curses.noecho()
-	curses.cbreak()
-	screen.keypad(True)
+	screen = curses_start()
 
 	# While loop listens for pilot input
 	while True:
@@ -175,13 +184,12 @@ try:
 	print("Code works") # Only prints if all code runs
 
 finally:
+	curses_stop(screen)
 	print
 	print("Cleaning up")
-
-	curses.nocbreak(); screen.keypad(0); curses.echo()
-	curses.endwin()
 
 	del inspectbot
 
 	GPIO.cleanup() # Cleans up GPIO after code is completed
 	print("Code Finished") # Prints once execution is complete
+
