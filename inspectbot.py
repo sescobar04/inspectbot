@@ -63,17 +63,22 @@ class Robot:
 		self.right_motor = right_motor
 		self.LEDs = LEDs
 
+	def __del__(self):
+		print("Destructor called")
+		self.motors_stop()
+		self.LED_off(self.LEDs)
+
 	def LED_on(self, pin):
 		# Turns on a specified LED
 		#pin is the number of the GPIO pin to be turned on
 		GPIO.output(pin, True)
-		print("LED on")
+		print("LED " + str(pin) + " on")
 
 	def LED_off(self, pin):
 		# Turns off a specified LED
 		#pin is the number of the GPIO pin to be turned off
 		GPIO.output(pin, False)
-		print("LED off")
+		print("LED " + str(pin) + " off")
 
 	def LED_flash(self, pin):
 		# Flashes a specified LED
@@ -135,6 +140,7 @@ class Robot:
 			except:
 				print("Invalid input")
 
+
 #main code execution
 
 try:
@@ -175,7 +181,7 @@ finally:
 	curses.nocbreak(); screen.keypad(0); curses.echo()
 	curses.endwin()
 
-	inspectbot.motors_stop() # Stops motors once code is completed
-	inspectbot.LED_off(inspectbot.LEDs) # Turns off all LEDs once code is completed
+	del inspectbot
+
 	GPIO.cleanup() # Cleans up GPIO after code is completed
 	print("Code Finished") # Prints once execution is complete
