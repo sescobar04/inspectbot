@@ -105,8 +105,13 @@ class Robot:
 		print("motor_reverse, pin: " + str(motor_pins[1]))
 
 	def motor_set_speed(self, motor_pin, speed):
-		motor_speed = (GPIO.PWM(motor_pin, speed))
+	 	motor_speed = (GPIO.PWM(motor_pin, speed))
+		print("Speed set")
 		return motor_speed
+
+	def motor_PWM_start(self, motor_speed):
+		print("PWM started")
+		motor_speed.start()
 
 	def pilot_control(self, input):
 		if input == 10: # Robot Stops
@@ -124,11 +129,14 @@ class Robot:
 			self.motor_forward(self.right_motor)
 			self.motor_reverse(self.left_motor)
 		else:
-			print("Invalid input: " + str(ord(input)))
+			try:
+				print("Invalid input: " + str(ord(chr(input))))
 
-
+			except:
+				print("Invalid input")
 
 #main code execution
+
 try:
 	inspectbot = Robot([4, 17], [27, 22], [23]) # initializing a Robot object
 
@@ -138,6 +146,9 @@ try:
 	gpio_setup_outputs(inspectbot.right_motor) # Set up the right motor pins
 	inspectbot.motors_stop() # Stops both motors
 	gpio_setup_outputs(inspectbot.LEDs) # Set up the LED GPIO pins
+
+	inspectbot.motor_set_speed(inspectbot.left_motor[0], 50)
+	#inspectbot.motor_PWM_start(inspectbot.left_motor_speed)
 
 	# Setting up curses to recieve pilot input
 	screen = curses.initscr()
