@@ -1,15 +1,25 @@
 inspectbot.py
+--------------------------
 
 1. Add and test PWM functionality for motor speed control
 
+2. Add a class for containing the stepper motor attributes and methods
 
--------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
 
 General Project Needs
+--------------------------
 
-3. Have the raspberry pi create it's own wireless network to which the pilot can connect
+1. Have the raspberry pi create it's own wireless network to which the pilot can connect
    to in order to view the video feed
 
-4. Have inspectbot.py run at startup and depending on how it works, have the wireless network
+2. Have inspectbot.py run at startup and depending on how it works, have the wireless network
    initiate on startup
 
+3. Build the enclosure for the electronic components
+
+4. Determine how to mount the stepper motor to robot
+
+5. Determine how to mount the camera to the stepper motor
+
+-------------------------------------------------------------------------------------------------

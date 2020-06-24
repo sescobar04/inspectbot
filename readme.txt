@@ -29,8 +29,12 @@ Component List
 	Electonic component housing made using ABS plastic sheets
 	18 AWG Wire
 		To connect 12v DC motors to motor controller
-	Jumper Wires (Male to Female)
+	5 x Jumper Wires (Female to Female)
 		To connect components to the raspberry pi
+	1 x Dual Pole Single Throw Switch
+		To disconnect the 12v DC motors from power while the pi is booting
+	1 X DC Power pigtail connector
+		To easily remove 18650 battery holder for charging
 
 Purpose of the build
 	To inspect locations that are either harzardous or too small to fit a human
