@@ -73,7 +73,7 @@ def curses_start():
 	return(screen)
 
 def curses_stop(screen):
-	# Sets the terminal back to it's original state
+	# Sets the terminal back to its original state
 	curses.nocbreak(); screen.keypad(0); curses.echo()
 	curses.endwin()
 	print("Curses stopped")
@@ -97,9 +97,12 @@ class Robot:
 
 	#Contructor
 	def __init__(self, left_motor, right_motor, LEDs):
+        #First pin in motor is forward pin.
+        #Second pin in motor is reverse pin
 		self.left_motor = left_motor
 		self.right_motor = right_motor
 		self.LEDs = LEDs
+        self.motors_stop()
 
 	#Deconstructor
 
